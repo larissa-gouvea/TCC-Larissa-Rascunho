@@ -19,10 +19,10 @@ entity frontend_master is
             AWBURST: in std_logic_vector(1 downto 0); --DEPENDENCIA
 
             -- Write data signals.
-            WVALID : in std_logic; --TVALID DEPENDENCIA
-            WREADY : out std_logic; --TVALID
-            WDATA  : in std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0); --TDATA DEPENDENCIA
-            WLAST  : in std_logic; --TLAST DEPENDENCIA
+            TVALID : in std_logic; --TVALID DEPENDENCIA
+            TREADY : out std_logic; --TREADY
+            TDATA  : in std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0); --TDATA DEPENDENCIA
+            TLAST  : in std_logic; --TLAST DEPENDENCIA
 
             -- Write response signals. (ACHO QUE NEM VAI TER)
             BVALID : out std_logic;
@@ -118,9 +118,9 @@ begin
 
     -- Control information.
     o_START_SEND_PACKET <= '1' when (AWVALID = '1' or ARVALID = '1')    else '0'; -- eu tenho que achar qaundo inicia, que seria quando o ulitimo pacote tinha o tlast=1 e o valid e ready sao 1
-    o_VALID_SEND_DATA   <= '1' when (w_OPC_SEND = '0' and WVALID = '1') else '0'; --'1' when (w_OPC_SEND = '0' and TVALID = '1') else '0';
-    o_LAST_SEND_DATA    <= '1' when (w_OPC_SEND = '0' and WLAST = '1')  else '0'; -- '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0';
-    o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and WVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
+    o_VALID_SEND_DATA   <= '1' when (w_OPC_SEND = '0' and TVALID = '1') else '0'; --'1' when (w_OPC_SEND = '0' and TVALID = '1') else '0';
+    o_LAST_SEND_DATA    <= '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0'; -- '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0';
+    o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
 
     -- eu vou adicionar o signal e if é codigo meu -----------------
   signal last_packet_done : std_logic := '1';
@@ -173,4 +173,5 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and m_axis_tvalid = '1' a
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
