@@ -7,7 +7,7 @@ use work.tcc_package.all;
 entity frontend_master is
     port(
         -- AMBA AXI 5 signals.
-        ACLK: in std_logic; --DEPENDENCIA
+        ACLK: in std_logic; -- DEPENDENCIA
         ARESETn: in std_logic;
 
             -- Write request signals.
@@ -15,8 +15,8 @@ entity frontend_master is
             AWREADY: out std_logic;
             AWID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); --TID DEPENDENCIA
             AWADDR : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); --DEPENDENCIA
-            AWLEN  : in std_logic_vector(7 downto 0); --DEPENDENCIA
-            AWBURST: in std_logic_vector(1 downto 0); --DEPENDENCIA
+            AWLEN  : in std_logic_vector(7 downto 0); -- DEPENDENCIA
+            AWBURST: in std_logic_vector(1 downto 0); -- DEPENDENCIA
 
             -- Write data signals.
             TVALID : in std_logic; --TVALID DEPENDENCIA
@@ -93,14 +93,14 @@ begin
     begin
         if (rising_edge(ACLK)) then
             if (i_READY_SEND_PACKET = '1') then
-                if (AWVALID = '1') then
+                if (AWVALID = '1') then -- aparentemente quando incia o pacote
                     -- Registering write signals.
                     w_OPC_SEND <= '0';
 
-                    o_ADDR      <= AWADDR;
-                    o_ID        <= AWID;
-                    o_LENGTH    <= AWLEN;
-                    o_BURST     <= AWBURST;
+                    o_ADDR      <= AWADDR; -- N TEM, depois decido o que fazer
+                    o_ID        <= AWID; --TID
+                    o_LENGTH    <= AWLEN; --N TEM, depois decido o que fazer
+                    o_BURST     <= AWBURST; -- N TEM, depois decido o que fazer
                 elsif (ARVALID = '1') then
                     -- Registering read signals.
                     w_OPC_SEND <= '1';
@@ -173,5 +173,6 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and m_axis_tvalid = '1' a
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
