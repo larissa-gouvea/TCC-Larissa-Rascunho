@@ -93,7 +93,7 @@ begin
     begin
         if (rising_edge(ACLK)) then
             if (i_READY_SEND_PACKET = '1') then
-                if (AWVALID = '1') then -- aparentemente quando incia o pacote
+                if (TVALID = '1') then -- aparentemente quando incia o pacote, antigo AWVALID
                     -- Registering write signals.
                     w_OPC_SEND <= '0';
 
@@ -173,6 +173,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and m_axis_tvalid = '1' a
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
