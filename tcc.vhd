@@ -97,10 +97,10 @@ begin
                     -- Registering write signals.
                     w_OPC_SEND <= '0';
 
-                    o_ADDR      <= AWADDR; -- N TEM, depois decido o que fazer
-                    o_ID        <= AWID; --TID
-                    o_LENGTH    <= AWLEN; --N TEM, depois decido o que fazer
-                    o_BURST     <= AWBURST; -- N TEM, depois decido o que fazer
+                    o_ADDR      <= TDEST; -- antigo AWADDR
+                    o_ID        <= TID; -- antigo AWID
+                    o_LENGTH    <= x"0F"; -- Valor fixo ou contador (AXIS não tem LENGTH) [1], antigo AWLEN
+                    o_BURST     <= "01";  -- Fixo em Incremental [6], antigo AWBURST
                 elsif (ARVALID = '1') then
                     -- Registering read signals.
                     w_OPC_SEND <= '1';
@@ -173,6 +173,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and m_axis_tvalid = '1' a
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
