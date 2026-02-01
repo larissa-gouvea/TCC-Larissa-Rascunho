@@ -116,13 +116,7 @@ begin
 
     o_OPC_SEND <= w_OPC_SEND;
 
-    -- Control information.
-    o_START_SEND_PACKET <= '1' when (AWVALID = '1' or ARVALID = '1')    else '0'; -- eu tenho que achar qaundo inicia, que seria quando o ulitimo pacote tinha o tlast=1 e o valid e ready sao 1
-    o_VALID_SEND_DATA   <= '1' when (w_OPC_SEND = '0' and TVALID = '1') else '0'; --'1' when (w_OPC_SEND = '0' and TVALID = '1') else '0';
-    o_LAST_SEND_DATA    <= '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0'; -- '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0';
-    o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
-
-    -- eu vou adicionar o signal e if é codigo meu -----------------
+ -- eu vou adicionar o signal e if é codigo meu -----------------
   signal last_packet_done : std_logic := '1';
 
     process(ACLK)
@@ -132,10 +126,10 @@ begin
                 last_packet_done <= '1';
             else
                 -- Pacote terminou
-                if m_axis_tvalid = '1' and m_axis_tready = '1' and m_axis_tlast = '1' then --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then
+                if TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then  --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then
                     last_packet_done <= '1'; 
                 -- Novo pacote começou
-                elsif m_axis_tvalid = '1' and m_axis_tready = '1' and last_packet_done = '1' then --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then
+                elsif TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then
                     last_packet_done <= '0';
                 end if;
             end if;
@@ -143,10 +137,18 @@ begin
     end process;
 
 -- START apenas no início de uma nova transação
-o_START_SEND_PACKET <= '1' when last_packet_done = '1' and m_axis_tvalid = '1' and m_axis_tready = '1' else '0';
+o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_READY_SEND_PACKET = '1' else '0';
 ----ate aqui é meu codigo ---------------------------------------
 
     -- Ready information to front-end.
+    -- Control information.
+    --esse o_START_SEND_PACKET eu fiz um novo codigo pra ele por isso ele ta em comentario
+    --o_START_SEND_PACKET <= '1' when (AWVALID = '1' or ARVALID = '1')    else '0'; -- eu tenho que achar qaundo inicia, que seria quando o ulitimo pacote tinha o tlast=1 e o valid e ready sao 1
+    o_VALID_SEND_DATA   <= '1' when (w_OPC_SEND = '0' and TVALID = '1') else '0'; --'1' when (w_OPC_SEND = '0' and TVALID = '1') else '0';
+    o_LAST_SEND_DATA    <= '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0'; -- '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0';
+    o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
+
+
     AWREADY <= i_READY_SEND_PACKET; -- nao sei o que vou fazer com esse i_READY_SEND_PACKET
     ARREADY <= i_READY_SEND_PACKET; 
     WREADY  <= i_READY_SEND_DATA;  --   TREADY  <= i_READY_SEND_DATA; é só pra isso que esse ready send data serve mesmo(considerando que o front do AMBA AXI ta assim mesmo)
@@ -173,6 +175,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and m_axis_tvalid = '1' a
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
