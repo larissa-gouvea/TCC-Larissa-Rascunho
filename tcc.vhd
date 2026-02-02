@@ -149,9 +149,9 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
     o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
 
 
-    AWREADY <= i_READY_SEND_PACKET; -- nao sei o que vou fazer com esse i_READY_SEND_PACKET
-    ARREADY <= i_READY_SEND_PACKET; 
-    WREADY  <= i_READY_SEND_DATA;  --   TREADY  <= i_READY_SEND_DATA; é só pra isso que esse ready send data serve mesmo(considerando que o front do AMBA AXI ta assim mesmo)
+    -- AWREADY <= i_READY_SEND_PACKET; -- coloquei como comentario pq acho que vou ter que apagar n vou usar
+    -- ARREADY <= i_READY_SEND_PACKET; -- coloquei como comentario pq acho que vou ter que apagar n vou usar
+    TREADY  <= i_READY_SEND_DATA;  --   TREADY  <= i_READY_SEND_DATA; é só pra isso que esse ready send data serve mesmo(considerando que o front do AMBA AXI ta assim mesmo), antigo WREADY
 
     ---------------------------------------------------------------------------------------------
     -- Reception.
@@ -175,6 +175,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
