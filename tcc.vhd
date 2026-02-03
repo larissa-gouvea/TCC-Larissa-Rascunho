@@ -92,8 +92,8 @@ begin
     registering: process(all)
     begin
         if (rising_edge(ACLK)) then
-            if (i_READY_SEND_PACKET = '1') then
-                if (TVALID = '1') then -- aparentemente quando incia o pacote, antigo AWVALID
+            if (i_READY_SEND_PACKET = '1') then -- Esse sinal só é 1 no estado IDLE
+                if (TVALID = '1') then -- aparentemente quando incia o pacote, se o valid é 1 significa que os dados estão validos antigo AWVALID
                     -- Registering write signals.
                     w_OPC_SEND <= '0';
 
@@ -126,7 +126,7 @@ begin
                 last_packet_done <= '1';
             else
                 -- Pacote terminou
-                if TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then  --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then
+                if TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then  -- i_READY_SEND_DATA = '1' no estado payload, 
                     last_packet_done <= '1'; 
                 -- Novo pacote começou
                 elsif TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then
@@ -137,7 +137,7 @@ begin
     end process;
 
 -- START apenas no início de uma nova transação
-o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_READY_SEND_PACKET = '1' else '0';
+o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_READY_SEND_PACKET = '1' else '0'; -- no estado IDLE isso ocorre
 ----ate aqui é meu codigo ---------------------------------------
 
     -- Ready information to front-end.
@@ -175,6 +175,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
