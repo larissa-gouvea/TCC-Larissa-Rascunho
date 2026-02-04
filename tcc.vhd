@@ -11,16 +11,18 @@ entity frontend_master is
         ARESETn: in std_logic;
 
             -- Write request signals.
-            AWVALID: in std_logic; --DEPENDENCIA
-            AWREADY: out std_logic;
-            AWID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); --TID DEPENDENCIA
-            AWADDR : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); --DEPENDENCIA
-            AWLEN  : in std_logic_vector(7 downto 0); -- DEPENDENCIA
-            AWBURST: in std_logic_vector(1 downto 0); -- DEPENDENCIA
+            -- AWVALID: in std_logic; --DEPENDENCIA
+            -- AWREADY: out std_logic;
+            -- AWID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); --TID, DEPENDENCIA
+            TID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); -- verificar tamanho do vetor
+            -- AWADDR : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); -- TDEST, DEPENDENCIA
+            TDEST : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); -- verificar tamanho do vetor
+            -- AWLEN  : in std_logic_vector(7 downto 0); -- Fixei um valor pra ele, DEPENDENCIA 
+            -- AWBURST: in std_logic_vector(1 downto 0); -- Fixei um valor pra ele, DEPENDENCIA
 
             -- Write data signals.
             TVALID : in std_logic; --TVALID DEPENDENCIA
-            TREADY : out std_logic; --TREADY
+            TREADY : out std_logic; -- TREADY
             TDATA  : in std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0); --TDATA DEPENDENCIA
             TLAST  : in std_logic; --TLAST DEPENDENCIA
 
@@ -149,9 +151,9 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
     o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
 
 
-    -- AWREADY <= i_READY_SEND_PACKET; -- coloquei como comentario pq acho que vou ter que apagar n vou usar
+    -- AWREADY <= i_READY_SEND_PACKET; -- coloquei como comentario pq acho que vou ter que apagar n vou usar, i_READY_SEND_PACKET significa que tá no idle
     -- ARREADY <= i_READY_SEND_PACKET; -- coloquei como comentario pq acho que vou ter que apagar n vou usar
-    TREADY  <= i_READY_SEND_DATA;  --   TREADY  <= i_READY_SEND_DATA; é só pra isso que esse ready send data serve mesmo(considerando que o front do AMBA AXI ta assim mesmo), antigo WREADY
+    TREADY  <= i_READY_SEND_DATA;  -- é só pra isso que esse ready send data serve mesmo(considerando que o front do AMBA AXI ta assim mesmo), tá no estado de payload antigo WREADY
 
     ---------------------------------------------------------------------------------------------
     -- Reception.
@@ -175,6 +177,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
