@@ -120,9 +120,9 @@ begin
 
     o_OPC_SEND <= w_OPC_SEND;
 
- -- eu vou adicionar o signal e if é codigo meu -----------------
-  signal last_packet_done : std_logic := '1';
+ -- eu vou adicionar if é codigo meu -----------------
 
+                
     process(ACLK)
     begin
         if rising_edge(ACLK) then
@@ -150,7 +150,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
     --o_START_SEND_PACKET <= '1' when (AWVALID = '1' or ARVALID = '1')    else '0'; -- eu tenho que achar qaundo inicia, que seria quando o ulitimo pacote tinha o tlast=1 e o valid e ready sao 1
     o_VALID_SEND_DATA   <= '1' when (w_OPC_SEND = '0' and TVALID = '1') else '0'; --'1' when (w_OPC_SEND = '0' and TVALID = '1') else '0';
     o_LAST_SEND_DATA    <= '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0'; -- '1' when (w_OPC_SEND = '0' and TLAST = '1')  else '0';
-    o_DATA_SEND         <= WDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
+    o_DATA_SEND         <= TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0'); --TDATA when (w_OPC_SEND = '0' and TVALID = '1') else (others => '0');
 
 
     -- AWREADY <= i_READY_SEND_PACKET; -- coloquei como comentario pq acho que vou ter que apagar n vou usar, i_READY_SEND_PACKET significa que tá no idle
@@ -179,6 +179,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
