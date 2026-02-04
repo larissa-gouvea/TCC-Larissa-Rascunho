@@ -41,12 +41,12 @@ entity frontend_master is
             ARBURST: in std_logic_vector(1 downto 0); --DEPENDENCIA
 
             -- Read response/data signals.
-            RVALID : out std_logic;
-            RREADY : in std_logic;
-            RDATA  : out std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0);
-            RLAST  : out std_logic;
-            RID    : out std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0) := (others => '0');
-            RRESP  : out std_logic_vector(c_AXI_RESP_WIDTH - 1 downto 0) := (others => '0');
+            -- RVALID : out std_logic;
+            -- RREADY : in std_logic;
+            -- RDATA  : out std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0);
+            -- RLAST  : out std_logic;
+            -- RID    : out std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0) := (others => '0');
+            -- RRESP  : out std_logic_vector(c_AXI_RESP_WIDTH - 1 downto 0) := (others => '0');
 
             -- Extra signals.
             CORRUPT_PACKET: out std_logic;
@@ -158,25 +158,26 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
     ---------------------------------------------------------------------------------------------
     -- Reception.
 
-    o_READY_RECEIVE_PACKET <= '1' when (i_OPC_RECEIVE = '0' and BREADY = '1') or
+    --o_READY_RECEIVE_PACKET <= '1' when (i_OPC_RECEIVE = '0' and BREADY = '1') or
                                        (i_OPC_RECEIVE = '1' and RREADY = '1') else '0';
 
-    o_READY_RECEIVE_DATA   <= RREADY;
+    --o_READY_RECEIVE_DATA   <= RREADY;
 
     -- Write reception.
-    BVALID <= '1' when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_DATA = '1') else '0';
-    BID    <= i_ID_RECEIVE when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_ID_WIDTH - 1 downto 0 => '0');
-    BRESP  <= i_STATUS_RECEIVE when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_RESP_WIDTH - 1 downto 0 => '0');
+    --BVALID <= '1' when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_DATA = '1') else '0';
+    --BID    <= i_ID_RECEIVE when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_ID_WIDTH - 1 downto 0 => '0');
+    --BRESP  <= i_STATUS_RECEIVE when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_RESP_WIDTH - 1 downto 0 => '0');
 
     -- Read reception.
-    RVALID <= '1' when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else '0';
-    RDATA  <= i_DATA_RECEIVE when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_DATA_WIDTH - 1 downto 0 => '0');
-    RLAST  <= i_LAST_RECEIVE_DATA;
-    RID    <= i_ID_RECEIVE when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_ID_WIDTH - 1 downto 0 => '0');
-    RRESP  <= i_STATUS_RECEIVE when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_RESP_WIDTH - 1 downto 0 => '0');
+    --RVALID <= '1' when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else '0';
+    --RDATA  <= i_DATA_RECEIVE when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_DATA_WIDTH - 1 downto 0 => '0');
+    --RLAST  <= i_LAST_RECEIVE_DATA;
+    --RID    <= i_ID_RECEIVE when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_ID_WIDTH - 1 downto 0 => '0');
+    --RRESP  <= i_STATUS_RECEIVE when (i_OPC_RECEIVE = '1' and i_VALID_RECEIVE_DATA = '1') else (c_AXI_RESP_WIDTH - 1 downto 0 => '0');
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
