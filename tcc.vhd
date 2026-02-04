@@ -83,6 +83,8 @@ entity frontend_master is
 end frontend_master;
 
 architecture rtl of frontend_master is
+    --Sinal que eu coloquei
+    signal last_packet_done : std_logic := '1';
     -- Injection.
     signal w_OPC_SEND: std_logic;
 
@@ -177,6 +179,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
