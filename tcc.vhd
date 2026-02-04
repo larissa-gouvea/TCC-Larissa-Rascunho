@@ -161,7 +161,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
     -- Reception.
 
     --o_READY_RECEIVE_PACKET <= '1' when (i_OPC_RECEIVE = '0' and BREADY = '1') or
-                                       (i_OPC_RECEIVE = '1' and RREADY = '1') else '0';
+                                       --(i_OPC_RECEIVE = '1' and RREADY = '1') else '0';
 
     --o_READY_RECEIVE_DATA   <= RREADY;
 
@@ -179,6 +179,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
