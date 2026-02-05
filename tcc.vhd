@@ -67,28 +67,23 @@ entity frontend_master is
         o_DATA_SEND: out std_logic_vector(31 downto 0);
 
         -- Backend signals (reception).
-        i_VALID_RECEIVE_DATA: in std_logic;
-        i_LAST_RECEIVE_DATA : in std_logic;
+        --i_VALID_RECEIVE_DATA: in std_logic;
+        --i_LAST_RECEIVE_DATA : in std_logic;
 
-        i_ID_RECEIVE    : in std_logic_vector(4 downto 0);
-        i_STATUS_RECEIVE: in std_logic_vector(2 downto 0);
-        i_OPC_RECEIVE   : in std_logic; --DEPENDENCIA
-        i_DATA_RECEIVE  : in std_logic_vector(31 downto 0);
+        --i_ID_RECEIVE    : in std_logic_vector(4 downto 0);
+        --i_STATUS_RECEIVE: in std_logic_vector(2 downto 0);
+        --i_OPC_RECEIVE   : in std_logic; --DEPENDENCIA
+        --i_DATA_RECEIVE  : in std_logic_vector(31 downto 0);
 
-        i_CORRUPT_RECEIVE: in std_logic;
+        i_CORRUPT_RECEIVE: in std_logic
 
-        o_READY_RECEIVE_PACKET: out std_logic;
-        o_READY_RECEIVE_DATA  : out std_logic
+        --o_READY_RECEIVE_PACKET: out std_logic;
+        --o_READY_RECEIVE_DATA  : out std_logic
     );
 end frontend_master;
 
 architecture rtl of frontend_master is
 
-    -- AXI constants (from tcc_package) coloquei pq vai precisar
-    constant c_AXI_DATA_WIDTH : natural := 32;
-    constant c_AXI_ADDR_WIDTH : natural := c_AXI_DATA_WIDTH * 2;
-    constant c_AXI_ID_WIDTH   : natural := 5;
-    constant c_AXI_RESP_WIDTH : natural := 3;
     --Sinal que eu coloquei
     signal last_packet_done : std_logic := '1';
     -- Injection.
