@@ -2,7 +2,7 @@ library IEEE;
 library work;
 
 use IEEE.std_logic_1164.all;
-use work.tcc_package.all;
+--use work.tcc_package.all;
 
 entity frontend_master is
     port(
@@ -14,31 +14,31 @@ entity frontend_master is
             -- AWVALID: in std_logic; --DEPENDENCIA
             -- AWREADY: out std_logic;
             -- AWID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); --TID, DEPENDENCIA
-            TID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); -- verificar tamanho do vetor
+            TID   : in std_logic_vector(4 downto 0); -- verificar tamanho do vetor
             -- AWADDR : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); -- TDEST, DEPENDENCIA
-            TDEST : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); -- verificar tamanho do vetor
+            TDEST : in std_logic_vector(63 downto 0); -- verificar tamanho do vetor
             -- AWLEN  : in std_logic_vector(7 downto 0); -- Fixei um valor pra ele, DEPENDENCIA 
             -- AWBURST: in std_logic_vector(1 downto 0); -- Fixei um valor pra ele, DEPENDENCIA
 
             -- Write data signals.
             TVALID : in std_logic; --TVALID DEPENDENCIA
             TREADY : out std_logic; -- TREADY
-            TDATA  : in std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0); --TDATA DEPENDENCIA
+            TDATA  : in std_logic_vector(31 downto 0); --TDATA DEPENDENCIA
             TLAST  : in std_logic; --TLAST DEPENDENCIA
 
             -- Write response signals. (ACHO QUE NEM VAI TER)
-            BVALID : out std_logic;
-            BREADY : in std_logic; --DEPENDENCIA
-            BID    : out std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0) := (others => '0');
-            BRESP  : out std_logic_vector(c_AXI_RESP_WIDTH - 1 downto 0) := (others => '0');
+            --BVALID : out std_logic;
+            --BREADY : in std_logic; --DEPENDENCIA
+            --BID    : out std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0) := (others => '0');
+            --BRESP  : out std_logic_vector(c_AXI_RESP_WIDTH - 1 downto 0) := (others => '0');
 
             -- Read request signals.
-            ARVALID: in std_logic; --DEPENDENCIA
-            ARREADY: out std_logic; --DEPENDENCIA
-            ARID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); --DEPENDENCIA
-            ARADDR : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); --DEPENDENCIA
-            ARLEN  : in std_logic_vector(7 downto 0); --DEPENDENCIA
-            ARBURST: in std_logic_vector(1 downto 0); --DEPENDENCIA
+            --ARVALID: in std_logic; --DEPENDENCIA
+            --ARREADY: out std_logic; --DEPENDENCIA
+            --ARID   : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0); --DEPENDENCIA
+            --ARADDR : in std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0); --DEPENDENCIA
+            --ARLEN  : in std_logic_vector(7 downto 0); --DEPENDENCIA
+            --ARBURST: in std_logic_vector(1 downto 0); --DEPENDENCIA
 
             -- Read response/data signals.
             -- RVALID : out std_logic;
@@ -59,21 +59,21 @@ entity frontend_master is
         o_VALID_SEND_DATA  : out std_logic;
         o_LAST_SEND_DATA   : out std_logic;
 
-        o_ADDR     : out std_logic_vector(c_AXI_ADDR_WIDTH - 1 downto 0);
-        o_ID       : out std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0);
+        o_ADDR     : out std_logic_vector(63 downto 0);
+        o_ID       : out std_logic_vector(4 downto 0);
         o_LENGTH   : out std_logic_vector(7 downto 0);
         o_BURST    : out std_logic_vector(1 downto 0);
         o_OPC_SEND : out std_logic;
-        o_DATA_SEND: out std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0);
+        o_DATA_SEND: out std_logic_vector(31 downto 0);
 
         -- Backend signals (reception).
         i_VALID_RECEIVE_DATA: in std_logic;
         i_LAST_RECEIVE_DATA : in std_logic;
 
-        i_ID_RECEIVE    : in std_logic_vector(c_AXI_ID_WIDTH - 1 downto 0);
-        i_STATUS_RECEIVE: in std_logic_vector(c_AXI_RESP_WIDTH - 1 downto 0);
+        i_ID_RECEIVE    : in std_logic_vector(4 downto 0);
+        i_STATUS_RECEIVE: in std_logic_vector(2 downto 0);
         i_OPC_RECEIVE   : in std_logic; --DEPENDENCIA
-        i_DATA_RECEIVE  : in std_logic_vector(c_AXI_DATA_WIDTH - 1 downto 0);
+        i_DATA_RECEIVE  : in std_logic_vector(31 downto 0);
 
         i_CORRUPT_RECEIVE: in std_logic;
 
@@ -83,6 +83,12 @@ entity frontend_master is
 end frontend_master;
 
 architecture rtl of frontend_master is
+
+    -- AXI constants (from tcc_package) coloquei pq vai precisar
+    constant c_AXI_DATA_WIDTH : natural := 32;
+    constant c_AXI_ADDR_WIDTH : natural := c_AXI_DATA_WIDTH * 2;
+    constant c_AXI_ID_WIDTH   : natural := 5;
+    constant c_AXI_RESP_WIDTH : natural := 3;
     --Sinal que eu coloquei
     signal last_packet_done : std_logic := '1';
     -- Injection.
@@ -93,7 +99,7 @@ begin
     -- Injection.
 
     -- Registering transaction information.
-    registering: process(all)
+    registering: process(ACLK)
     begin
         if (rising_edge(ACLK)) then
             if (i_READY_SEND_PACKET = '1') then -- Esse sinal só é 1 no estado IDLE
@@ -105,14 +111,14 @@ begin
                     o_ID        <= TID; -- antigo AWID
                     o_LENGTH    <= x"0F"; -- Valor fixo ou contador (AXIS não tem LENGTH) [1], antigo AWLEN
                     o_BURST     <= "01";  -- Fixo em Incremental [6], antigo AWBURST
-                elsif (ARVALID = '1') then
+                --elsif (ARVALID = '1') then
                     -- Registering read signals.
-                    w_OPC_SEND <= '1';
+                   -- w_OPC_SEND <= '1';
 
-                    o_ADDR      <= ARADDR;
-                    o_ID        <= ARID; 
-                    o_LENGTH    <= ARLEN;
-                    o_BURST     <= ARBURST;
+                   -- o_ADDR      <= ARADDR;
+                    --o_ID        <= ARID; 
+                    --o_LENGTH    <= ARLEN;
+                    --o_BURST     <= ARBURST;
                 end if;
             end if;
         end if;
@@ -120,9 +126,9 @@ begin
 
     o_OPC_SEND <= w_OPC_SEND;
 
- -- eu vou adicionar if é codigo meu -----------------
+ -- eu vou adicionar o signal e if é codigo meu -----------------
 
-                
+
     process(ACLK)
     begin
         if rising_edge(ACLK) then
@@ -161,7 +167,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
     -- Reception.
 
     --o_READY_RECEIVE_PACKET <= '1' when (i_OPC_RECEIVE = '0' and BREADY = '1') or
-                                       --(i_OPC_RECEIVE = '1' and RREADY = '1') else '0';
+                                       -- (i_OPC_RECEIVE = '1' and RREADY = '1') else '0';
 
     --o_READY_RECEIVE_DATA   <= RREADY;
 
@@ -179,7 +185,6 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
-
 
 
 
