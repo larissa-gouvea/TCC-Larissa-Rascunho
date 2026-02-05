@@ -124,25 +124,8 @@ begin
  -- eu vou adicionar o signal e if é codigo meu -----------------
 
 
-    process(ACLK)
-    begin
-        if rising_edge(ACLK) then
-            if ARESETn = '0' then
-                last_packet_done <= '1';
-            else
-                -- Pacote terminou
-                if TVALID = '1' and i_READY_SEND_DATA = '1' and TLAST = '1' then  -- i_READY_SEND_DATA = '1' no estado payload, 
-                    last_packet_done <= '1'; 
-                -- Novo pacote começou
-                elsif TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then --- no meu seria ACHO TVALID = '1' and i_READY_SEND_DATA = '1' and last_packet_done = '1' then
-                    last_packet_done <= '0';
-                end if;
-            end if;
-        end if;
-    end process;
-
 -- START apenas no início de uma nova transação
-o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_READY_SEND_PACKET = '1' else '0'; -- no estado IDLE isso ocorre
+o_START_SEND_PACKET <= '1' when TVALID = '1' and i_READY_SEND_PACKET = '1' else '0'; -- no estado IDLE isso ocorre
 ----ate aqui é meu codigo ---------------------------------------
 
     -- Ready information to front-end.
@@ -180,6 +163,7 @@ o_START_SEND_PACKET <= '1' when last_packet_done = '1' and TVALID = '1' and i_RE
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
