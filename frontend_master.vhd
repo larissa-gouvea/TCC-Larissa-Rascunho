@@ -5,19 +5,20 @@ use IEEE.std_logic_1164.all;
 
 entity frontend_master is
     port(
-        -- AMBA AXI 5 signals.
+        -- AXI-Stream signals.
         ACLK: in std_logic;
         ARESETn: in std_logic;
 
-            -- Write request signals.
+            
             TID   : in std_logic_vector(4 downto 0); 
             TDEST : in std_logic_vector(63 downto 0);
-
-            -- Write data signals.
+            TSTRB : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8
+            TKEEP : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8
+        
             TVALID : in std_logic; 
             TREADY : out std_logic; 
             TDATA  : in std_logic_vector(31 downto 0);
-            TLAST  : in std_logic; --TLAST DEPENDENCIA
+            TLAST  : in std_logic; 
 
             -- Extra signals.
             CORRUPT_PACKET: out std_logic;
@@ -82,6 +83,7 @@ begin
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
