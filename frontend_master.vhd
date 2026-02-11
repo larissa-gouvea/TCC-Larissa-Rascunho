@@ -12,8 +12,8 @@ entity frontend_master is
             
             TID   : in std_logic_vector(4 downto 0); 
             TDEST : in std_logic_vector(63 downto 0);
-            TSTRB : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8
-            TKEEP : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8
+            TSTRB : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8 (não está sendo utilizado ainda)
+            TKEEP : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8 (não está sendo utilizado ainda)
         
             TVALID : in std_logic; 
             TREADY : out std_logic; 
@@ -83,6 +83,7 @@ begin
 
     CORRUPT_PACKET <= i_CORRUPT_RECEIVE;
 end rtl;
+
 
 
 
