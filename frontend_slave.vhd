@@ -16,7 +16,8 @@ entity frontend_slave is
             TREADY : in std_logic;
             TDATA  : out std_logic_vector(31 downto 0);
             TLAST  : out std_logic;
-        
+            TSTRB : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8 (não está sendo utilizado ainda)
+            TKEEP : in std_logic_vector(3 downto 0); -- TDATA_WIDTH/8 (não está sendo utilizado ainda)
         
             -- Extra signals.
             CORRUPT_PACKET: out std_logic;
