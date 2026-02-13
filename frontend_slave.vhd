@@ -91,37 +91,36 @@ begin
     -- Injection.
 
     -- Registering transaction information.
-    registering: process(all)
-    begin
-        if (rising_edge(ACLK)) then
-            if (w_VALID_SEND_DATA = '1') then
-                if (BVALID = '1') then
+   -- registering: process(all)
+    --begin
+       -- if (rising_edge(ACLK)) then
+            --if (w_VALID_SEND_DATA = '1') then
+               -- if (BVALID = '1') then
                     -- Registering write signals.
-                    o_STATUS_SEND <= BRESP;
-                elsif (RVALID = '1') then
+                   -- o_STATUS_SEND <= BRESP;
+                --elsif (RVALID = '1') then
                     -- Registering read signals.
-                    o_STATUS_SEND <= RRESP;
-                end if;
-            end if;
-        end if;
-    end process registering;
+                  --  o_STATUS_SEND <= RRESP;
+                --end if;
+            --end if;
+        --end if;
+    --end process registering;
 
     -- Control information.
-    w_VALID_SEND_DATA   <= '1' when (BVALID = '1' or RVALID = '1') else '0';
-    o_VALID_SEND_DATA   <= w_VALID_SEND_DATA;
+    --w_VALID_SEND_DATA   <= '1' when (BVALID = '1' or RVALID = '1') else '0';
+    --o_VALID_SEND_DATA   <= w_VALID_SEND_DATA;
 
-    o_LAST_SEND_DATA    <= RLAST;
-    o_DATA_SEND         <= RDATA when (RVALID = '1') else (c_AXI_DATA_WIDTH - 1 downto 0 => '0');
+    --o_LAST_SEND_DATA    <= RLAST;
+    --o_DATA_SEND         <= RDATA when (RVALID = '1') else (c_AXI_DATA_WIDTH - 1 downto 0 => '0');
 
     -- Ready information to IP.
-    BREADY <= '1' when (i_OPC_RECEIVE = '0' and i_READY_SEND_DATA = '1') else '0';
-    RREADY <= '1' when (i_OPC_RECEIVE = '1' and i_READY_SEND_DATA = '1') else '0';
+    -- BREADY <= '1' when (i_OPC_RECEIVE = '0' and i_READY_SEND_DATA = '1') else '0';
+    -- RREADY <= '1' when (i_OPC_RECEIVE = '1' and i_READY_SEND_DATA = '1') else '0';
 
     ---------------------------------------------------------------------------------------------
     -- Reception.
-    o_READY_RECEIVE_PACKET <= '1' when (i_OPC_RECEIVE = '0' and AWREADY = '1') or
-                                       (i_OPC_RECEIVE = '1' and ARREADY = '1') else '0';
-    o_READY_RECEIVE_DATA   <= WREADY;
+    o_READY_RECEIVE_PACKET <= '1' when (i_OPC_RECEIVE = '0' and TREADY = '1') else '0';
+    o_READY_RECEIVE_DATA   <= TREADY;
 
     AWVALID <= '1' when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_PACKET = '1') else '0';
     AWID    <= i_ID_RECEIVE when (i_OPC_RECEIVE = '0' and i_VALID_RECEIVE_PACKET = '1') else (c_AXI_ID_WIDTH - 1 downto 0 => '0');
